@@ -38,7 +38,7 @@ class NewVisitorTest(unittest.TestCase):
     simulate_button.click()
 
     # Wilhelm see the result of the battle simulation
-    time.sleep(3)  # wait for the results to load
+    time.sleep(1)  # wait for the results to load
     result_statement = self.browser.find_element(By.ID, 'id_result_statement').text
     self.assertIn(result_statement, ["Attackers win", "Defenders win"])
 
