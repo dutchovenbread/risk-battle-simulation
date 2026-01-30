@@ -1,0 +1,2 @@
+Run unittest tests with pytest. Initial version, where I only have a functional test:
+pytest functional_tests.py
