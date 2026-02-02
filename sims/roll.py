@@ -31,11 +31,53 @@ def risk_rolls_battle_to_completion(attacker_armies, defender_armies):
   return attacker_armies, defender_armies
 
 def risk_attack_successive_countries(attacker_armies, defender_armies_list):
-  pass
-  # assert defender_armies_list[0] == 0
-  # result_attacker_armies_by_country = []
-  # result_defender_armies_by_country = []
-  # for index, defender_armies in enumerate(defender_armies_list):
+  assert defender_armies_list[0] == 0
+  result_attacker_armies_by_country = [attacker_armies]
+  result_attacker_armies_by_country.extend([0] * (len(defender_armies_list) -1))
+  result_defender_armies_by_country = defender_armies_list
+
+  # print(f'Initial attacker armies by country: {result_attacker_armies_by_country}')
+  # print(f'Initial defender armies by country: {result_defender_armies_by_country}')
+
+  for index in range(1, len(defender_armies_list)):
+    attacker_armies = result_attacker_armies_by_country[index - 1]
+    defender_armies = result_defender_armies_by_country[index]
+    # print(f'Index: {index}, Attacker armies: {attacker_armies}, Defender armies: {defender_armies}')
+    if attacker_armies <= 1:
+      # print(f'  Only one attacker army left, stopping attack')
+      break
+    else:
+      # print(f'  Continuing attack')
+      attacker_armies_after_battle, remaining_defender_armies = risk_rolls_battle_to_completion(attacker_armies, defender_armies)
+      if remaining_defender_armies == 0:
+        # print(f'  Attacker conquered country {index}. Attacker armies left: {attacker_armies_after_battle}. Defender armies left: {remaining_defender_armies}')
+        # set defender armies to 0
+        result_defender_armies_by_country[index] = 0
+        # leave one army behind in the attacking country
+        result_attacker_armies_by_country[index - 1] = 1
+        # move remaining attacking armies to conquered country
+        result_attacker_armies_by_country[index] = attacker_armies_after_battle - 1
+        # print(f'  Armies left in the attacking country {result_attacker_armies_by_country[index-1]}')
+        # print(f'  Armies moved to conquered country {result_attacker_armies_by_country[index]}')
+      else:
+        # print(f'  Attacker failed to conquer country {index}. Attacker armies left: {attacker_armies_after_battle}. Defender armies left: {remaining_defender_armies}')
+        # put the remaining defender armies in the current country
+        result_defender_armies_by_country[index] = remaining_defender_armies
+        # put the remaining attacker armies in the current country
+        result_attacker_armies_by_country[index - 1] = attacker_armies_after_battle
+        # print(f'  Armies left in the attacking country {result_attacker_armies_by_country[index - 1]}')
+        break
+  # print(f'Final result attacker armies by country: {result_attacker_armies_by_country}')
+  # print(f'Final result defender armies by country: {result_defender_armies_by_country}')
+  return result_attacker_armies_by_country, result_defender_armies_by_country
+
+
+
+
+
+
+
+
   #   print(f'Index: {index}, Attacker armies: {attacker_armies}, Defender armies: {defender_armies}')
   #   if index == 0:
   #     print(f'  First country, no battle')

@@ -101,19 +101,30 @@ def test_succession_of_defended_countries():
     assert sum(attacking_armies_by_country) <= attacking_armies
     print("successful test of succession of defended countries")
 
-def test_succession_of_defended_countries_2_1_1():
+def test_succession_of_defended_countries_2_1_1_attacker_loses():
   attacking_armies = 2
   defending_armies_list = [0, 1, 1]
   attacking_armies_by_country, defending_armies_by_country = risk_attack_successive_countries(attacking_armies, defending_armies_list)
-  assert defending_armies_by_country == [0, 0, 1] or defending_armies_by_country == [0, 1, 1]
-  assert attacking_armies_by_country == [1, 1, 0] or attacking_armies_by_country == [1, 0, 0]
+  assert (defending_armies_by_country == [0, 0, 1] or defending_armies_by_country == [0, 1, 1])
+  assert (attacking_armies_by_country == [1, 1, 0] or attacking_armies_by_country == [1, 0, 0])
   assert sum(attacking_armies_by_country) + sum(defending_armies_by_country) == 3
 
-def test_succession_of_defended_countries_1_1_1():
+def test_succession_of_defended_countries_1_1_1_attacker_loses():
   attacking_armies = 1
   defending_armies_list = [0, 1, 1]
   attacking_armies_by_country, defending_armies_by_country = risk_attack_successive_countries(attacking_armies, defending_armies_list)
   assert defending_armies_by_country == [0, 1, 1]
   assert attacking_armies_by_country == [1, 0, 0]
-  assert sum(attacking_armies_by_country) + sum(defending_armies_by_country) == 3   
+  assert sum(attacking_armies_by_country) + sum(defending_armies_by_country) == 3
+
+def test_succession_of_defended_countries_100_1_1_attacker_wins():
+  attacking_armies = 100
+  defending_armies_list = [0, 1, 1]
+  attacking_armies_by_country, defending_armies_by_country = risk_attack_successive_countries(attacking_armies, defending_armies_list)
+  assert defending_armies_by_country == [0, 0, 0]
+  assert attacking_armies_by_country[0] == 1
+  assert attacking_armies_by_country[1]  == 1
+  assert len(attacking_armies_by_country) == 3
+  assert attacking_armies_by_country[2] > 50
+ 
 
