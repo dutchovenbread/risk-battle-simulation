@@ -77,6 +77,12 @@ def successive_country_summary(attacker_armies_list, defender_armies_list):
   summary = total_armies_able_to_attack - total_defender_armies_remaining
   return summary
 
+def individual_battle_summary(attacker_armies, defender_armies):
+  if attacker_armies == 1:
+    return -1 * defender_armies
+  else:
+    return attacker_armies - 1
+
 
 def repeated_risk_battles(attacker_armies, defender_armies, num_simulations):
   attacker_wins = 0
