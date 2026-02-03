@@ -1,4 +1,4 @@
-from sims.roll import roll_die, roll_multiple_dice, risk_rolls, risk_attack_successive_countries
+from sims.roll import individual_battle_summary, roll_die, roll_multiple_dice, risk_rolls, risk_attack_successive_countries, successive_country_summary
 
 def test_roll_one_die():
   for i in range(100):  
@@ -126,5 +126,27 @@ def test_succession_of_defended_countries_100_1_1_attacker_wins():
   assert attacking_armies_by_country[1]  == 1
   assert len(attacking_armies_by_country) == 3
   assert attacking_armies_by_country[2] > 50
- 
 
+def test_successive_country_summary_a():
+    attacking_armies_list = [1, 1, 1, 10]
+    defending_armies_list = [0, 0, 0, 0]
+    summary = successive_country_summary(attacking_armies_list, defending_armies_list)
+    assert summary == 9
+ 
+def test_successive_country_summary_b():
+    attacking_armies_list = [1, 0, 0, 0]
+    defending_armies_list = [0, 1, 1, 10]
+    summary = successive_country_summary(attacking_armies_list, defending_armies_list)
+    assert summary == -12
+
+def test_individual_battle_summary_a():
+    attacking_armies = 5
+    defending_armies = 0
+    summary = individual_battle_summary(attacking_armies, defending_armies)
+    assert summary == 4
+
+def test_individual_battle_summary_b():
+    attacking_armies = 1
+    defending_armies = 3
+    summary = individual_battle_summary(attacking_armies, defending_armies)
+    assert summary == -3
