@@ -27,4 +27,6 @@ class HomePageTest(TestCase):
     contains_win = response.content.decode().find('Attackers win') != -1
     contains_lose = response.content.decode().find('Defenders win') != -1
     self.assertTrue(contains_win or contains_lose)
+    self.assertFalse(contains_win and contains_lose)
+    self.assertTemplateUsed(response, 'home.html')
 
