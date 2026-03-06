@@ -30,3 +30,25 @@ class HomePageTest(TestCase):
     self.assertFalse(contains_win and contains_lose)
     self.assertTemplateUsed(response, 'home.html')
 
+  def test_home_page_does_not_show_result_before_post_request(self):
+    response = self.client.get('/')
+    self.assertNotContains(response, 'Attackers win')
+    self.assertNotContains(response, 'Defenders win')
+
+  def test_home_page_shows_result_after_post_request_attacker_win(self):
+    response = self.client.post('/', data={
+      'attacking_armies': '100',
+      'defending_armies': '1',
+    })
+    self.assertContains(response, 'Attackers win')
+    self.assertNotContains(response, 'Defenders win')
+    self.assertTemplateUsed(response, 'home.html')
+
+  def test_home_page_shows_result_after_post_request_defender_win(self):
+    response = self.client.post('/', data={
+      'attacking_armies': '1',
+      'defending_armies': '100',
+    })
+    self.assertContains(response, 'Defenders win')
+    self.assertNotContains(response, 'Attackers win')
+    self.assertTemplateUsed(response, 'home.html')
