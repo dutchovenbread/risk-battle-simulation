@@ -14,6 +14,8 @@ class HomePageTest(TestCase):
   def test_renders_homepage_form(self):
     response = self.client.get('/')
     self.assertContains(response, '<form method="POST">')
+    self.assertContains(response, 'name="attacking_armies"')
+    self.assertContains(response, 'name="defending_armies"')
     
 
   def test_home_page_can_submit_post_request(self):
