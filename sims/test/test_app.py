@@ -11,6 +11,11 @@ class HomePageTest(TestCase):
     response = self.client.get('/')
     self.assertContains(response, 'Risk Simulation')
 
+  def test_renders_homepage_form(self):
+    response = self.client.get('/')
+    self.assertContains(response, '<form method="POST">')
+    
+
   def test_home_page_can_submit_post_request(self):
     response = self.client.post('/', data={
       'attacking_armies': '5',
