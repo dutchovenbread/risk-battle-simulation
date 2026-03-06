@@ -3,10 +3,11 @@
   <body>
     <h1>Risk Simulation!</h1>
     <form method="POST">
-      <input id="id_attacking_armies" placeholder="Number of attacking armies"/>
-      <input id="id_defending_armies" placeholder="Number of defending armies"/>
+      <input name="attacking_armies" id="id_attacking_armies" placeholder="Number of attacking armies"/>
+      <input name="defending_armies" id="id_defending_armies" placeholder="Number of defending armies"/>
       <button id="id_simulate_button">Simulate</button>
       {% csrf_token %}
     </form>
+    <p id="id_result_statement">{{ result_statement }}</p>
   </body>
 </html>

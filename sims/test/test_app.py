@@ -11,6 +11,13 @@ class HomePageTest(TestCase):
     response = self.client.get('/')
     self.assertContains(response, 'Risk Simulation')
 
+  def test_renders_homepage_form(self):
+    response = self.client.get('/')
+    self.assertContains(response, '<form method="POST">')
+    self.assertContains(response, 'name="attacking_armies"')
+    self.assertContains(response, 'name="defending_armies"')
+    
+
   def test_home_page_can_submit_post_request(self):
     response = self.client.post('/', data={
       'attacking_armies': '5',
@@ -20,4 +27,6 @@ class HomePageTest(TestCase):
     contains_win = response.content.decode().find('Attackers win') != -1
     contains_lose = response.content.decode().find('Defenders win') != -1
     self.assertTrue(contains_win or contains_lose)
+    self.assertFalse(contains_win and contains_lose)
+    self.assertTemplateUsed(response, 'home.html')
 
