@@ -42,6 +42,20 @@ class NewVisitorTest(unittest.TestCase):
     result_statement = self.browser.find_element(By.ID, 'id_result_statement').text
     self.assertIn(result_statement, ["Attackers win", "Defenders win"])
 
+    # Wilhelm sees the remaining armies for each side
+    attacking_remaining_text = self.browser.find_element(By.ID, 'id_attacking_armies_remaining').text
+    defending_remaining_text = self.browser.find_element(By.ID, 'id_defending_armies_remaining').text
+    self.assertIn("Attacking armies remaining:", attacking_remaining_text)
+    self.assertIn("Defending armies remaining:", defending_remaining_text)
+    attacking_remaining = int(attacking_remaining_text.split(':', 1)[1].strip())
+    defending_remaining = int(defending_remaining_text.split(':', 1)[1].strip())
+    self.assertGreaterEqual(attacking_remaining, 1)
+    self.assertGreaterEqual(defending_remaining, 0)
+    if result_statement == "Attackers win":
+      self.assertEqual(defending_remaining, 0)
+    else:
+      self.assertEqual(attacking_remaining, 1)
+
     # Wilhelm is clicks to see the odds of a similar battle
 
     # Wilhelm sees the odds displayed on the page

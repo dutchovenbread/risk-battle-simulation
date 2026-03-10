@@ -9,5 +9,11 @@
       {% csrf_token %}
     </form>
     <p id="id_result_statement">{{ result_statement }}</p>
+    {% if ending_attacking_armies is not None %}
+      <p id="id_attacking_armies_remaining">Attacking armies remaining: {{ ending_attacking_armies }}</p>
+    {% endif %}
+    {% if ending_defending_armies is not None %}
+      <p id="id_defending_armies_remaining">Defending armies remaining: {{ ending_defending_armies }}</p>
+    {% endif %}
   </body>
 </html>
