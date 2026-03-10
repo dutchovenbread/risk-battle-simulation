@@ -11,5 +11,9 @@ def home_page(request):
       result_statement = "Attackers win"
     else:
       result_statement = "Defenders win"
-    return render(request, 'home.html', {'result_statement': result_statement})
+    return render(request, 'home.html', {
+      'result_statement': result_statement,
+      'ending_attacking_armies': ending_attacking_armies,
+      'ending_defending_armies': ending_defending_armies,
+    })
   return render(request, 'home.html')
