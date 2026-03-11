@@ -61,3 +61,14 @@ class HomePageTest(TestCase):
     self.assertContains(response, 'Attacking armies remaining:')
     self.assertContains(response, 'Defending armies remaining:')
     self.assertTemplateUsed(response, 'home.html')
+
+  def test_home_page_shows_starting_armies_after_post_request(self):
+    attacking_armies = '5'
+    defending_armies = '3'
+    response = self.client.post('/', data={
+      'attacking_armies': attacking_armies,
+      'defending_armies': defending_armies,
+    })
+    self.assertContains(response, f'Attacking armies starting: {attacking_armies}')
+    self.assertContains(response, f'Defending armies starting: {defending_armies}')
+    self.assertTemplateUsed(response, 'home.html')

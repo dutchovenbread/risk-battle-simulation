@@ -13,6 +13,8 @@ def home_page(request):
       result_statement = "Defenders win"
     return render(request, 'home.html', {
       'result_statement': result_statement,
+      'starting_attacking_armies': starting_attacking_armies,
+      'starting_defending_armies': starting_defending_armies,
       'ending_attacking_armies': ending_attacking_armies,
       'ending_defending_armies': ending_defending_armies,
     })
