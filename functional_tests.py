@@ -42,6 +42,12 @@ class NewVisitorTest(unittest.TestCase):
     result_statement = self.browser.find_element(By.ID, 'id_result_statement').text
     self.assertIn(result_statement, ["Attackers win", "Defenders win"])
 
+    # Wilhelm sees the number of armies each side had at the beginning of the battle
+    attacking_starting_text = self.browser.find_element(By.ID, 'id_attacking_armies_starting').text
+    defending_starting_text = self.browser.find_element(By.ID, 'id_defending_armies_starting').text
+    self.assertIn("Attacking armies starting:", attacking_starting_text)
+    self.assertIn("Defending armies starting:", defending_starting_text)
+
     # Wilhelm sees the remaining armies for each side
     attacking_remaining_text = self.browser.find_element(By.ID, 'id_attacking_armies_remaining').text
     defending_remaining_text = self.browser.find_element(By.ID, 'id_defending_armies_remaining').text
