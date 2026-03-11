@@ -62,9 +62,56 @@ class NewVisitorTest(unittest.TestCase):
     else:
       self.assertEqual(attacking_remaining, 1)
 
-    # Wilhelm is clicks to see the odds of a similar battle
+    # Wilhelm runs another simulation with different starting armies
+    attacking_inputbox = self.browser.find_element(By.ID, 'id_attacking_armies')
+    defending_inputbox = self.browser.find_element(By.ID, 'id_defending_armies')
+    attacking_inputbox.clear()
+    defending_inputbox.clear()
+    attacking_inputbox.send_keys('10')
+    defending_inputbox.send_keys('10')
+    simulate_button.click()
 
-    # Wilhelm sees the odds displayed on the page
+    # Wilhelm sees the result of the second battle simulation
+    time.sleep(1)  # wait for the results to load
+    result_statement = self.browser.find_element(By.ID, 'id_result_statement').text
+    self.assertIn(result_statement, ["Attackers win", "Defenders win"])
+
+    # In a previous results table, Wilhelm sees the results of his previous simulations, including the one with 5 attacking and 3 defending armies, and the one with 10 attacking and 10 defending armies. He sees the starting and remaining armies for each simulation, and the result statement for each simulation.
+    results_table = self.browser.find_element(By.ID, 'id_results_table')
+    rows = results_table.find_elements(By.TAG_NAME, 'tr')
+    self.assertGreaterEqual(len(rows), 2)  # at least 2 rows for the two simulations
+    found_first_simulation = False
+    found_second_simulation = False
+    for row in rows:
+      cells = row.find_elements(By.TAG_NAME, 'td')
+      if len(cells) == 5:
+        starting_attacking = cells[0].text
+        starting_defending = cells[1].text
+        remaining_attacking = cells[2].text
+        remaining_defending = cells[3].text
+        result = cells[4].text
+        if (starting_attacking == '5' and starting_defending == '3'):
+          found_first_simulation = True
+          self.assertIn(result, ["Attackers win", "Defenders win"])
+          self.assertGreaterEqual(int(remaining_attacking), 1)
+          self.assertGreaterEqual(int(remaining_defending), 0)
+          if result == "Attackers win":
+            self.assertEqual(int(remaining_defending), 0)
+          else:
+            self.assertEqual(int(remaining_attacking), 1)
+        elif (starting_attacking == '10' and starting_defending == '10'):
+          found_second_simulation = True
+          self.assertIn(result, ["Attackers win", "Defenders win"])
+          self.assertGreaterEqual(int(remaining_attacking), 1)
+          self.assertGreaterEqual(int(remaining_defending), 0)
+          if result == "Attackers win":
+            self.assertEqual(int(remaining_defending), 0)
+          else:
+            self.assertEqual(int(remaining_attacking), 1)
+    self.assertTrue(found_first_simulation)
+    self.assertTrue(found_second_simulation) 
+
+
 
     # Wilhelm is satisfied and closes the browser
 
