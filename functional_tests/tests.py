@@ -1,10 +1,13 @@
+from django.test import LiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 import time
 import unittest
 
-class NewVisitorTest(unittest.TestCase):
+MAX_WAIT = 5
+
+class NewVisitorTest(LiveServerTestCase):
 
   def setUp(self):
     self.browser = webdriver.Firefox()
@@ -12,9 +15,57 @@ class NewVisitorTest(unittest.TestCase):
   def tearDown(self):
     self.browser.quit()
 
+  def wait_for_result_statement(self, expected_text_1, expected_text_2=None):
+    start_time = time.time()
+    while True:
+      try:
+        result_statement = self.browser.find_element(By.ID, 'id_result_statement').text
+        expected_text = [expected_text_1]
+        if expected_text_2:
+          expected_text.append(expected_text_2)
+        self.assertIn(result_statement, expected_text)
+        return result_statement
+      except (AssertionError, Exception) as e:
+        if time.time() - start_time > MAX_WAIT:
+          raise e
+        time.sleep(0.5)
+
+  def wait_for_row_in_results_table(self, starting_attacking, starting_defending):
+    """Wait until a row appears in the history table with the given starting values.
+
+    Supports tables with or without a leading timestamp column.
+    """
+    start_time = time.time()
+    while True:
+      try:
+        results_table = self.browser.find_element(By.ID, 'id_history')
+        rows = results_table.find_elements(By.TAG_NAME, 'tr')
+        for row in rows:
+          cells = row.find_elements(By.TAG_NAME, 'td')
+          if len(cells) >= 5:
+            # If there's a timestamp column, starting values are at 1 and 2
+            if len(cells) >= 6:
+              a = cells[1].text
+              d = cells[2].text
+            else:
+              a = cells[0].text
+              d = cells[1].text
+            if a == str(starting_attacking) and d == str(starting_defending):
+              return
+        # not found yet -> retry
+      except Exception as e:
+        last_exc = e
+      if time.time() - start_time > MAX_WAIT:
+        # raise the last exception or an assertion
+        try:
+          raise last_exc
+        except Exception:
+          raise AssertionError(f"Row with starting values {starting_attacking}, {starting_defending} not found in table")
+      time.sleep(0.5)
+
   def test_wilhelm_can_simulate_risk_battle(self):
     # Wilhelm goes to a new app, starting on the home page.
-    self.browser.get("http://localhost:8000")
+    self.browser.get(self.live_server_url)
     # Wilhelm notices the title of the page.
     self.assertIn("Risk Simulation", self.browser.title)
     header_text = self.browser.find_element(By.TAG_NAME, 'h1').text
@@ -38,9 +89,7 @@ class NewVisitorTest(unittest.TestCase):
     simulate_button.click()
 
     # Wilhelm see the result of the battle simulation
-    time.sleep(1)  # wait for the results to load
-    result_statement = self.browser.find_element(By.ID, 'id_result_statement').text
-    self.assertIn(result_statement, ["Attackers win", "Defenders win"])
+    result_statement = self.wait_for_result_statement("Attackers win", "Defenders win")
 
     # Wilhelm sees the number of armies each side had at the beginning of the battle
     attacking_starting_text = self.browser.find_element(By.ID, 'id_attacking_armies_starting').text
@@ -73,11 +122,11 @@ class NewVisitorTest(unittest.TestCase):
     simulate_button.click()
 
     # Wilhelm sees the result of the second battle simulation
-    time.sleep(1)  # wait for the results to load
-    result_statement = self.browser.find_element(By.ID, 'id_result_statement').text
-    self.assertIn(result_statement, ["Attackers win", "Defenders win"])
+    result_statement = self.wait_for_result_statement("Attackers win", "Defenders win")
 
     # In a previous results table, Wilhelm sees the results of his previous simulations, including the one with 5 attacking and 3 defending armies, and the one with 10 attacking and 10 defending armies. He sees the starting and remaining armies for each simulation, and the result statement for each simulation.
+    self.wait_for_row_in_results_table('5', '3')
+    self.wait_for_row_in_results_table('10', '10')
     results_table = self.browser.find_element(By.ID, 'id_history')
     rows = results_table.find_elements(By.TAG_NAME, 'tr')
     self.assertGreaterEqual(len(rows), 2)  # at least 2 rows for the two simulations
@@ -124,6 +173,5 @@ class NewVisitorTest(unittest.TestCase):
 
 
     # Wilhelm is satisfied and closes the browser
+    self.browser.quit()
 
-if __name__ == '__main__':
-  unittest.main()
