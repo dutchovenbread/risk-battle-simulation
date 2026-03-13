@@ -21,5 +21,32 @@
     {% if ending_defending_armies is not None %}
       <p id="id_defending_armies_remaining">Defending armies remaining: {{ ending_defending_armies }}</p>
     {% endif %}
+    {% if history %}
+      <h2>History</h2>
+      <table id="id_history" border="1">
+        <thead>
+          <tr>
+            <th>Date/Time</th>
+            <th>Attacking Armies</th>
+            <th>Defending Armies</th>
+            <th>Resulting Attacking Armies</th>
+            <th>Resulting Defending Armies</th>
+            <th>Result</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for sim in history %}
+            <tr>
+              <td>{{ sim.timestamp }}</td>
+              <td>{{ sim.attacking_armies_starting }}</td>
+              <td>{{ sim.defending_armies_starting }}</td>
+              <td>{{ sim.attacking_armies_remaining }}</td>
+              <td>{{ sim.defending_armies_remaining }}</td>
+              <td>{{ sim.result_statement }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% endif %}
   </body>
 </html>

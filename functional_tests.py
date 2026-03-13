@@ -69,6 +69,7 @@ class NewVisitorTest(unittest.TestCase):
     defending_inputbox.clear()
     attacking_inputbox.send_keys('10')
     defending_inputbox.send_keys('10')
+    simulate_button = self.browser.find_element(By.ID, 'id_simulate_button')
     simulate_button.click()
 
     # Wilhelm sees the result of the second battle simulation
@@ -77,19 +78,28 @@ class NewVisitorTest(unittest.TestCase):
     self.assertIn(result_statement, ["Attackers win", "Defenders win"])
 
     # In a previous results table, Wilhelm sees the results of his previous simulations, including the one with 5 attacking and 3 defending armies, and the one with 10 attacking and 10 defending armies. He sees the starting and remaining armies for each simulation, and the result statement for each simulation.
-    results_table = self.browser.find_element(By.ID, 'id_results_table')
+    results_table = self.browser.find_element(By.ID, 'id_history')
     rows = results_table.find_elements(By.TAG_NAME, 'tr')
     self.assertGreaterEqual(len(rows), 2)  # at least 2 rows for the two simulations
     found_first_simulation = False
     found_second_simulation = False
     for row in rows:
       cells = row.find_elements(By.TAG_NAME, 'td')
-      if len(cells) == 5:
-        starting_attacking = cells[0].text
-        starting_defending = cells[1].text
-        remaining_attacking = cells[2].text
-        remaining_defending = cells[3].text
-        result = cells[4].text
+      # support table with Date/Time + 5 data columns (6 tds)
+      if len(cells) >= 5:
+        # if there's a timestamp column, starting values shift by one
+        if len(cells) >= 6:
+          starting_attacking = cells[1].text
+          starting_defending = cells[2].text
+          remaining_attacking = cells[3].text
+          remaining_defending = cells[4].text
+          result = cells[5].text
+        else:
+          starting_attacking = cells[0].text
+          starting_defending = cells[1].text
+          remaining_attacking = cells[2].text
+          remaining_defending = cells[3].text
+          result = cells[4].text
         if (starting_attacking == '5' and starting_defending == '3'):
           found_first_simulation = True
           self.assertIn(result, ["Attackers win", "Defenders win"])

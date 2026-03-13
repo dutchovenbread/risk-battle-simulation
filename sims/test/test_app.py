@@ -72,3 +72,27 @@ class HomePageTest(TestCase):
     self.assertContains(response, f'Attacking armies starting: {attacking_armies}')
     self.assertContains(response, f'Defending armies starting: {defending_armies}')
     self.assertTemplateUsed(response, 'home.html')
+
+  def test_home_page_shows_history_after_multiple_post_requests(self):
+    response1 = self.client.post('/', data={
+      'attacking_armies': '5',
+      'defending_armies': '3',
+    })
+    response2 = self.client.post('/', data={
+      'attacking_armies': '10',
+      'defending_armies': '9',
+    })
+    # history renders as an HTML table with the expected columns
+    self.assertContains(response2, '<table')
+    self.assertContains(response2, 'Date/Time')
+    self.assertContains(response2, 'Attacking Armies')
+    self.assertContains(response2, 'Defending Armies')
+    self.assertContains(response2, 'Resulting Attacking Armies')
+    self.assertContains(response2, 'Resulting Defending Armies')
+    self.assertContains(response2, 'Result')
+    # rows should include the submitted start values
+    self.assertContains(response2, '5')
+    self.assertContains(response2, '3')
+    self.assertContains(response2, '10')
+    self.assertContains(response2, '9')
+    self.assertTemplateUsed(response2, 'home.html')
