@@ -1,10 +1,11 @@
+from django.test import LiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 import time
 import unittest
 
-class NewVisitorTest(unittest.TestCase):
+class NewVisitorTest(LiveServerTestCase):
 
   def setUp(self):
     self.browser = webdriver.Firefox()
@@ -14,7 +15,7 @@ class NewVisitorTest(unittest.TestCase):
 
   def test_wilhelm_can_simulate_risk_battle(self):
     # Wilhelm goes to a new app, starting on the home page.
-    self.browser.get("http://localhost:8000")
+    self.browser.get(self.live_server_url)
     # Wilhelm notices the title of the page.
     self.assertIn("Risk Simulation", self.browser.title)
     header_text = self.browser.find_element(By.TAG_NAME, 'h1').text
@@ -124,6 +125,5 @@ class NewVisitorTest(unittest.TestCase):
 
 
     # Wilhelm is satisfied and closes the browser
+    self.browser.quit()
 
-if __name__ == '__main__':
-  unittest.main()
