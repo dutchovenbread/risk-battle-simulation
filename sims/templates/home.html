@@ -1,52 +1,68 @@
-<html>
-  <title>Risk Simulation</title>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Risk Simulation</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  </head>
   <body>
-    <h1>Risk Simulation!</h1>
-    <form method="POST">
-      <input name="attacking_armies" id="id_attacking_armies" placeholder="Number of attacking armies"/>
-      <input name="defending_armies" id="id_defending_armies" placeholder="Number of defending armies"/>
-      <button id="id_simulate_button">Simulate</button>
-      {% csrf_token %}
-    </form>
-    <p id="id_result_statement">{{ result_statement }}</p>
-    {% if starting_attacking_armies is not None %}
-      <p id="id_attacking_armies_starting">Attacking armies starting: {{ starting_attacking_armies }}</p>
-    {% endif %}
-    {% if starting_defending_armies is not None %}
-      <p id="id_defending_armies_starting">Defending armies starting: {{ starting_defending_armies }}</p>
-    {% endif %}
-    {% if ending_attacking_armies is not None %}
-      <p id="id_attacking_armies_remaining">Attacking armies remaining: {{ ending_attacking_armies }}</p>
-    {% endif %}
-    {% if ending_defending_armies is not None %}
-      <p id="id_defending_armies_remaining">Defending armies remaining: {{ ending_defending_armies }}</p>
-    {% endif %}
-    {% if history %}
-      <h2>History</h2>
-      <table id="id_history" border="1">
-        <thead>
-          <tr>
-            <th>Date/Time</th>
-            <th>Attacking Armies</th>
-            <th>Defending Armies</th>
-            <th>Resulting Attacking Armies</th>
-            <th>Resulting Defending Armies</th>
-            <th>Result</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for sim in history %}
-            <tr>
-              <td>{{ sim.timestamp }}</td>
-              <td>{{ sim.attacking_armies_starting }}</td>
-              <td>{{ sim.defending_armies_starting }}</td>
-              <td>{{ sim.attacking_armies_remaining }}</td>
-              <td>{{ sim.defending_armies_remaining }}</td>
-              <td>{{ sim.result_statement }}</td>
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    {% endif %}
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-6 text-center">
+          <h1>Risk Simulation!</h1>
+          <form method="POST">
+            <input name="attacking_armies" id="id_attacking_armies" placeholder="Number of attacking armies"/>
+            <input name="defending_armies" id="id_defending_armies" placeholder="Number of defending armies"/>
+            <button id="id_simulate_button">Simulate</button>
+            {% csrf_token %}
+          </form>
+          <p id="id_result_statement">{{ result_statement }}</p>
+          {% if starting_attacking_armies is not None %}
+            <p id="id_attacking_armies_starting">Attacking armies starting: {{ starting_attacking_armies }}</p>
+          {% endif %}
+          {% if starting_defending_armies is not None %}
+            <p id="id_defending_armies_starting">Defending armies starting: {{ starting_defending_armies }}</p>
+          {% endif %}
+          {% if ending_attacking_armies is not None %}
+            <p id="id_attacking_armies_remaining">Attacking armies remaining: {{ ending_attacking_armies }}</p>
+          {% endif %}
+          {% if ending_defending_armies is not None %}
+            <p id="id_defending_armies_remaining">Defending armies remaining: {{ ending_defending_armies }}</p>
+          {% endif %}
+        </div>
+      </div>
+      <div class="row justify-content-center">
+        <div class="col-lg-6 ">
+        {% if history %}
+          <h2>History</h2>
+          <table class="table" id="id_history" >
+            <thead>
+              <tr>
+                <th>Date/Time</th>
+                <th>Attacking Armies</th>
+                <th>Defending Armies</th>
+                <th>Resulting Attacking Armies</th>
+                <th>Resulting Defending Armies</th>
+                <th>Result</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for sim in history %}
+                <tr>
+                  <td>{{ sim.timestamp }}</td>
+                  <td>{{ sim.attacking_armies_starting }}</td>
+                  <td>{{ sim.defending_armies_starting }}</td>
+                  <td>{{ sim.attacking_armies_remaining }}</td>
+                  <td>{{ sim.defending_armies_remaining }}</td>
+                  <td>{{ sim.result_statement }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        {% endif %}
+        </div>
+      </div>
+    </div>
   </body>
 </html>
