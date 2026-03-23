@@ -24,8 +24,8 @@ def home_page(request):
     )
     sim.save()
 
-    # get history (most recent first)
-    history = Simulation.objects.order_by('-timestamp')
+    # get history (most recent first), limit to 10 entries
+    history = Simulation.objects.order_by('-timestamp')[:10]
 
     return render(request, 'home.html', {
       'result_statement': result_statement,
