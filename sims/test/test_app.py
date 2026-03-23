@@ -96,3 +96,23 @@ class HomePageTest(TestCase):
     self.assertContains(response2, '10')
     self.assertContains(response2, '9')
     self.assertTemplateUsed(response2, 'home.html')
+
+  def test_history_shows_only_most_recent_ten_simulations(self):
+    # create 11 simulations
+    for i in range(11):
+      attacking = str(i + 1)
+      defending = str(i + 2)
+      response = self.client.post('/', data={
+        'attacking_armies': attacking,
+        'defending_armies': defending,
+      })
+    # the page should show at most 10 recent simulations
+    content = response.content.decode()
+    num_rows = content.count('<tr>') - 1  # subtract header row
+    self.assertEqual(num_rows, 10)
+    # the oldest simulation (starting values 1 and 2) should not be present
+    # assert the specific pair of starting values is not present as adjacent <td> cells
+    self.assertNotRegex(response.content.decode(), r"<td>\s*1\s*</td>\s*<td>\s*2\s*</td>")
+    # the most recent simulations should be present
+    for i in range(1, 11):
+      self.assertContains(response, str(i + 1))
