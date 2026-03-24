@@ -18,28 +18,11 @@ jobs:
       - name: Install system packages
         run: |
           sudo apt-get update
-          sudo apt-get install -y firefox xvfb curl wget tar unzip
+          sudo apt-get install -y firefox xvfb
 
-      - name: Install geckodriver
-        run: |
-          # download latest geckodriver release for linux64 from GitHub releases
-          GECKO_URL=$(curl -s https://api.github.com/repos/mozilla/geckodriver/releases/latest \
-            | grep browser_download_url | grep linux64 | cut -d '"' -f 4)
-          echo "Downloading geckodriver from: $GECKO_URL"
-          FILENAME=$(basename "$GECKO_URL")
-          curl -L "$GECKO_URL" -o "$FILENAME"
-          file "$FILENAME"
-          # extract based on archive type
-          if echo "$FILENAME" | grep -iE '\.tar\.gz$|\.tgz$' >/dev/null; then
-            tar -xzf "$FILENAME"
-          elif echo "$FILENAME" | grep -iE '\.zip$' >/dev/null; then
-            unzip -q "$FILENAME"
-          else
-            # fallback to tar auto-detect
-            tar -xvf "$FILENAME" || (echo "Unknown archive format for $FILENAME" && exit 1)
-          fi
-          sudo mv geckodriver /usr/local/bin/
-          sudo chmod +x /usr/local/bin/geckodriver
+      - name: Set up geckodriver
+        uses: mozilla/setup-geckodriver@v1
+        # optional input: geckodriver-version (e.g. 'v0.33.0')
 
       - name: Install dependencies
         run: |
