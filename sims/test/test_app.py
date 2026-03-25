@@ -106,13 +106,17 @@ class HomePageTest(TestCase):
         'attacking_armies': attacking,
         'defending_armies': defending,
       })
-    # the page should show at most 10 recent simulations
-    content = response.content.decode()
-    num_rows = content.count('<tr>') - 1  # subtract header row
-    self.assertEqual(num_rows, 10)
-    # the oldest simulation (starting values 1 and 2) should not be present
-    # assert the specific pair of starting values is not present as adjacent <td> cells
-    self.assertNotRegex(response.content.decode(), r"<td>\s*1\s*</td>\s*<td>\s*2\s*</td>")
-    # the most recent simulations should be present
-    for i in range(1, 11):
-      self.assertContains(response, str(i + 1))
+    # the view passes a `history` context variable — assert it's limited to 10
+    history = response.context.get('history')
+    self.assertIsNotNone(history)
+    self.assertEqual(len(history), 10)
+
+    # collect starting attacking values from the returned history
+    starting_values = {int(sim.attacking_armies_starting) for sim in history}
+
+    # oldest simulation had starting values (1,2) and should NOT be present
+    self.assertNotIn(1, starting_values)
+
+    # expected most-recent starting values are 2..11
+    expected = set(range(2, 12))
+    self.assertEqual(starting_values, expected)
